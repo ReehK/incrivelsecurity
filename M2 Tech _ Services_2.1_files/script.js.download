@@ -1,0 +1,131 @@
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize navigation highlight
+    //initNavHighlight();
+    
+    // Initialize smooth scrolling
+    initSmoothScroll();
+    
+    // Initialize scroll animations
+    initScrollAnimations();
+});
+
+/**
+ * Highlights the current active section in the navigation
+ */
+/*
+function initNavHighlight() {
+    // Get all sections that have an ID defined
+    const sections = document.querySelectorAll('section[id]');
+    
+    // Add an event listener for scroll
+    window.addEventListener('scroll', function() {
+        // Get current scroll position
+        let scrollY = window.pageYOffset;
+        
+        // Loop through sections to get height, top and ID values for each
+        sections.forEach(current => {
+            const sectionHeight = current.offsetHeight;
+            const sectionTop = current.offsetTop - 100;
+            const sectionId = current.getAttribute('id');
+            
+            // If our current scroll position enters the space where current section is
+            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                // Remove active class from all navigation items
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to corresponding navigation item
+                const activeLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        });
+    });
+}
+*/
+
+/**
+ * Initializes smooth scrolling for anchor links
+ */
+function initSmoothScroll() {
+    // Select all links with hashes
+    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
+        // Add event listener to each anchor
+        anchor.addEventListener('click', function(e) {
+            // Only prevent default if the hash value exists in the current page
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if(targetElement) {
+                // Prevent default anchor click behavior
+                e.preventDefault();
+                
+                // Calculate header offset
+                const headerOffset = 90;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                // Smooth scroll to target
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+/**
+ * Initializes animations triggered by scrolling
+ */
+function initScrollAnimations() {
+    // Select all elements to animate
+    const animatedElements = document.querySelectorAll('.service-card, .feature-card, .partner-card, .testimonial-card, .about-stat');
+    
+    // Create an Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Add animation class when element is visible
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+                
+                // Stop observing the element after it's animated
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+    
+    // Apply initial styles and start observing each element
+    animatedElements.forEach(element => {
+        // Set initial styles
+        element.style.opacity = 0;
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        
+        // Start observing
+        observer.observe(element);
+    });
+}
+
+/**
+ * Mobile menu toggle functionality (for responsive design)
+ */
+function toggleMobileMenu1() {
+    const navList = document.querySelector('.nav-list');
+    navList.classList.toggle('mobile-active');
+}
+function toggleMobileMenu() {
+    const nav = document.getElementById('main-nav');
+    nav.classList.toggle('mobile-active');
+}
+function toggleDropdown(el, e) {
+    e.preventDefault();
+    const item = el.closest('.nav-item');
+    item.classList.toggle('mobile-dropdown-active');
+}
